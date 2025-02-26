@@ -7,6 +7,15 @@ const messages = [
 ];
 
 export default function App() {
+  return (
+    <div>
+      <Steps />
+      <Steps />
+    </div>
+  );
+}
+
+function Steps() {
   // useState is also known as a hook in react. Hooks start with the use key word in react
   // hooks can only be used in the top level
   const [step, setStep] = useState(1);
@@ -15,11 +24,14 @@ export default function App() {
   // const [test, setTest] = useState({ name: "Gabe" });
 
   function handlePrevious() {
-    if (step > 1) setStep(step - 1);
+    if (step > 1) setStep((s) => s - 1);
   }
 
   function handleNext() {
-    if (step < 3) setStep(step + 1);
+    if (step < 3) {
+      setStep((s) => s + 1);
+      // setStep((s) => s + 1);
+    }
 
     // BAD PRACTICE
     // test.name = "Fred";
@@ -29,8 +41,8 @@ export default function App() {
   }
 
   return (
-    <>
-      <button className="close" onClick={() => setIsOpen(!isOpen)}>
+    <div>
+      <button className="close" onClick={() => setIsOpen((is) => !is)}>
         &times;
       </button>
       {isOpen && (
@@ -62,6 +74,6 @@ export default function App() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
