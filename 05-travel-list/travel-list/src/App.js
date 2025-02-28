@@ -20,8 +20,13 @@ function Logo() {
 }
 
 function Form() {
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log(e);
+  }
+
   return (
-    <form className="add-form">
+    <form className="add-form" onSubmit={handleSubmit}>
       <h3>What do you need for your 😍 trip?</h3>
       <select>
         {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
@@ -66,5 +71,3 @@ function Stats() {
     </footer>
   );
 }
-
-// 017 - 5:45
