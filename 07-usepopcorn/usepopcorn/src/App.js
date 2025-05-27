@@ -245,5 +245,3 @@ function WatchedMovie({ movie }) {
     </li>
   );
 }
-
-//015
