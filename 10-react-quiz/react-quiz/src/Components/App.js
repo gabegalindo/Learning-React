@@ -14,6 +14,12 @@ import Timer from "./Timer";
 
 const SECS_PER_QUESTION = 30;
 
+const POINTS_MAP = {
+  easy: 10,
+  medium: 20,
+  hard: 30,
+};
+
 const initialState = {
   questions: [],
 
@@ -24,12 +30,21 @@ const initialState = {
   points: 0,
   highscore: 0,
   secondsRemaining: null,
+  difficulty: "hard",
+  selectedQuestions: [],
+  amountOfQuestions: null,
 };
 
 function reducer(state, action) {
   switch (action.type) {
     case "dataReceived":
-      return { ...state, questions: action.payload, status: "ready" };
+      return {
+        ...state,
+        questions: action.payload,
+        status: "ready",
+        selectedQuestions: action.payload,
+        amountOfQuestions: state.questions.length,
+      };
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
@@ -71,6 +86,24 @@ function reducer(state, action) {
         secondsRemaining: state.secondsRemaining - 1,
         status: state.secondsRemaining === 0 ? "finished" : state.status,
       };
+    case "difficulty":
+      const points = POINTS_MAP[action.payload];
+
+      return {
+        ...state,
+        difficulty: action.payload,
+        selectedQuestions: state.questions.filter(
+          (question) => question.points <= points
+        ),
+      };
+    case "amountOfQuestions":
+      return {
+        ...state,
+        amountOfQuestions: action.payload,
+        selectedQuestions: [...state.selectedQuestions]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, action.payload),
+      };
     default:
       throw new Error("Action unknown");
   }
@@ -78,7 +111,16 @@ function reducer(state, action) {
 
 export default function App() {
   const [
-    { questions, status, index, answer, points, highscore, secondsRemaining },
+    {
+      questions,
+      status,
+      index,
+      answer,
+      points,
+      highscore,
+      secondsRemaining,
+      amountOfQuestions,
+    },
     dispatch,
   ] = useReducer(reducer, initialState);
 
@@ -103,7 +145,11 @@ export default function App() {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && (
-          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
+          <StartScreen
+            numQuestions={numQuestions}
+            dispatch={dispatch}
+            amountOfQuestions={amountOfQuestions}
+          />
         )}
         {status === "active" && (
           <>
