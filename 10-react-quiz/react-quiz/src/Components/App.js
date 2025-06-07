@@ -35,6 +35,7 @@ const initialState = {
   finalQuestions: [],
   amountOfQuestions: null,
   difficultyHighscore: {},
+  shouldUploadHighscore: false,
 };
 
 function reducer(state, action) {
@@ -49,16 +50,9 @@ function reducer(state, action) {
         amountOfQuestions: state.questions.length,
       };
     case "loadHighscores":
-      const scoreMap = {};
-      const iterator = action.payload.values();
-
-      for (const value of iterator) {
-        console.log(value);
-      }
-      // const loadedHighscores = action.payload.map({key, value} =>  )
-      // console.log(action.payload);
-
       return { ...state, difficultyHighscore: action.payload };
+    case "resetUploadFlag":
+      return { ...state, shouldUploadHighscore: false };
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
@@ -91,29 +85,6 @@ function reducer(state, action) {
       const currentHigh = state.difficultyHighscore[state.difficulty] || 0;
       const newHigh = state.points > currentHigh ? state.points : currentHigh;
 
-      if (newHigh > currentHigh) {
-        async function uploadHighScore() {
-          try {
-            const res = await fetch("http://localhost:8000/highscores", {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(scores),
-            });
-
-            if (!res.ok) {
-              throw new Error(`HTTP error! Status: ${res.status}`);
-            }
-
-            const data = await res.json();
-            console.log("Response data:", data);
-          } catch (err) {
-            console.log(console.error("Error sending data:", err));
-          }
-        }
-      }
-
       return {
         ...state,
         status: "finished",
@@ -121,6 +92,7 @@ function reducer(state, action) {
           ...state.difficultyHighscore,
           [state.difficulty]: newHigh,
         },
+        shouldUploadHighscore: newHigh > currentHigh,
       };
     case "restart":
       return {
@@ -176,6 +148,7 @@ export default function App() {
       difficultyHighscore,
       secondsRemaining,
       amountOfQuestions,
+      shouldUploadHighscore,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
@@ -187,19 +160,53 @@ export default function App() {
     0
   );
 
-  useEffect(function () {
-    fetch("http://localhost:8000/questions")
-      .then((res) => res.json())
-      .then((data) => dispatch({ type: "dataReceived", payload: data }))
-      .catch((err) => dispatch({ type: "dataFailed" }));
-  }, []);
+  useEffect(
+    function () {
+      fetch("http://localhost:8000/questions")
+        .then((res) => res.json())
+        .then((data) => dispatch({ type: "dataReceived", payload: data }))
+        .catch((err) => dispatch({ type: "dataFailed" }));
+    },
+    [dispatch]
+  );
 
   useEffect(function () {
-    fetch("http://localhost:8000/highscores")
+    fetch("http://localhost:8000/highscores/1")
       .then((res) => res.json())
       .then((data) => dispatch({ type: "loadHighscores", payload: data }))
       .catch((err) => dispatch({ type: "dataFailed" }));
   }, []);
+
+  useEffect(
+    function () {
+      async function uploadHighScore() {
+        try {
+          const res = await fetch("http://localhost:8000/highscores/1", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              [difficulty]: difficultyHighscore[difficulty],
+            }),
+          });
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          }
+
+          const data = await res.json();
+          console.log("Highscore updated:", data);
+        } catch (err) {
+          console.log(console.error("Error sending data:", err));
+        } finally {
+          dispatch({ type: "resetUploadFlag" });
+        }
+      }
+      uploadHighScore();
+    },
+    [shouldUploadHighscore, difficulty, difficultyHighscore, dispatch]
+  );
 
   return (
     <div className="app">
