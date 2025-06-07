@@ -18,7 +18,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server data/questions.json --port 8000"
+    "server": "json-server data/db.json --port 8000"
   },
   "eslintConfig": {
     "extends": [

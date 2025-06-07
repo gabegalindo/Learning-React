@@ -31,8 +31,10 @@ const initialState = {
   highscore: 0,
   secondsRemaining: null,
   difficulty: "hard",
-  selectedQuestions: [],
+  initialQuestions: [],
+  finalQuestions: [],
   amountOfQuestions: null,
+  difficultyHighscore: {},
 };
 
 function reducer(state, action) {
@@ -42,19 +44,38 @@ function reducer(state, action) {
         ...state,
         questions: action.payload,
         status: "ready",
-        selectedQuestions: action.payload,
+        initialQuestions: action.payload,
+        finalQuestions: action.payload,
         amountOfQuestions: state.questions.length,
       };
+    case "loadHighscores":
+      const scoreMap = {};
+      const iterator = action.payload.values();
+
+      for (const value of iterator) {
+        console.log(value);
+      }
+      // const loadedHighscores = action.payload.map({key, value} =>  )
+      // console.log(action.payload);
+
+      return { ...state, difficultyHighscore: action.payload };
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
+      if (
+        state.amountOfQuestions > state.finalQuestions.length ||
+        state.amountOfQuestions < 1
+      ) {
+        return { ...state, status: "error" };
+      }
+
       return {
         ...state,
         status: "active",
         secondsRemaining: state.questions.length * SECS_PER_QUESTION,
       };
     case "newAnswer":
-      const question = state.questions.at(state.index);
+      const question = state.finalQuestions.at(state.index);
 
       return {
         ...state,
@@ -67,18 +88,49 @@ function reducer(state, action) {
     case "nextQuestion":
       return { ...state, index: state.index + 1, answer: null };
     case "finish":
+      const currentHigh = state.difficultyHighscore[state.difficulty] || 0;
+      const newHigh = state.points > currentHigh ? state.points : currentHigh;
+
+      if (newHigh > currentHigh) {
+        async function uploadHighScore() {
+          try {
+            const res = await fetch("http://localhost:8000/highscores", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(scores),
+            });
+
+            if (!res.ok) {
+              throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+
+            const data = await res.json();
+            console.log("Response data:", data);
+          } catch (err) {
+            console.log(console.error("Error sending data:", err));
+          }
+        }
+      }
+
       return {
         ...state,
         status: "finished",
-        highscore:
-          state.points > state.highscore ? state.points : state.highscore,
+        difficultyHighscore: {
+          ...state.difficultyHighscore,
+          [state.difficulty]: newHigh,
+        },
       };
     case "restart":
       return {
         ...initialState,
         questions: state.questions,
+        initialQuestions: state.questions,
+        finalQuestions: state.questions,
+        amountOfQuestions: state.questions.length,
         status: "ready",
-        highscore: state.highscore,
+        difficultyHighscore: state.difficultyHighscore,
       };
     case "tick":
       return {
@@ -88,19 +140,21 @@ function reducer(state, action) {
       };
     case "difficulty":
       const points = POINTS_MAP[action.payload];
+      const filteredQuestions = state.questions.filter(
+        (question) => question.points <= points
+      );
 
       return {
         ...state,
         difficulty: action.payload,
-        selectedQuestions: state.questions.filter(
-          (question) => question.points <= points
-        ),
+        initialQuestions: filteredQuestions,
+        finalQuestions: filteredQuestions,
       };
     case "amountOfQuestions":
       return {
         ...state,
         amountOfQuestions: action.payload,
-        selectedQuestions: [...state.selectedQuestions]
+        finalQuestions: [...state.initialQuestions]
           .sort(() => Math.random() - 0.5)
           .slice(0, action.payload),
       };
@@ -112,20 +166,23 @@ function reducer(state, action) {
 export default function App() {
   const [
     {
-      questions,
+      initialQuestions,
+      finalQuestions,
       status,
       index,
       answer,
       points,
-      highscore,
+      difficulty,
+      difficultyHighscore,
       secondsRemaining,
       amountOfQuestions,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
 
-  const numQuestions = questions.length;
-  const maxPossiblePoints = questions.reduce(
+  const totalQuestions = initialQuestions.length;
+  const toBeTestedQuestions = finalQuestions.length;
+  const maxPossiblePoints = finalQuestions.reduce(
     (prev, curr) => prev + curr.points,
     0
   );
@@ -134,6 +191,13 @@ export default function App() {
     fetch("http://localhost:8000/questions")
       .then((res) => res.json())
       .then((data) => dispatch({ type: "dataReceived", payload: data }))
+      .catch((err) => dispatch({ type: "dataFailed" }));
+  }, []);
+
+  useEffect(function () {
+    fetch("http://localhost:8000/highscores")
+      .then((res) => res.json())
+      .then((data) => dispatch({ type: "loadHighscores", payload: data }))
       .catch((err) => dispatch({ type: "dataFailed" }));
   }, []);
 
@@ -146,7 +210,8 @@ export default function App() {
         {status === "error" && <Error />}
         {status === "ready" && (
           <StartScreen
-            numQuestions={numQuestions}
+            toBeTestedQuestions={toBeTestedQuestions}
+            totalQuestions={totalQuestions}
             dispatch={dispatch}
             amountOfQuestions={amountOfQuestions}
           />
@@ -155,13 +220,13 @@ export default function App() {
           <>
             <Progress
               index={index}
-              numQuestions={numQuestions}
+              numQuestions={toBeTestedQuestions}
               points={points}
               maxPossiblePoints={maxPossiblePoints}
               answer={answer}
             />
             <Question
-              question={questions[index]}
+              question={finalQuestions[index]}
               dispatch={dispatch}
               answer={answer}
             />
@@ -170,7 +235,7 @@ export default function App() {
               <NextButton
                 dispatch={dispatch}
                 answer={answer}
-                numQuestions={numQuestions}
+                numQuestions={toBeTestedQuestions}
                 index={index}
               />
             </Footer>
@@ -180,7 +245,7 @@ export default function App() {
           <FinishScreen
             points={points}
             maxPossiblePoints={maxPossiblePoints}
-            highscore={highscore}
+            highscore={difficultyHighscore[difficulty]}
             dispatch={dispatch}
           />
         )}
