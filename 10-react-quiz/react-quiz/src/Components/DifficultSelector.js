@@ -2,7 +2,7 @@ function DifficultSelector({ dispatch }) {
   return (
     <>
       <select
-        className="difficulty"
+        className="difficulty "
         onChange={(e) =>
           dispatch({ type: "difficulty", payload: e.target.value })
         }

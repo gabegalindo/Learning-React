@@ -184,7 +184,7 @@
   "highscores": [
     {
       "id": "1",
-      "easy": 0,
+      "easy": 20,
       "medium": 0,
       "hard": 60
     }

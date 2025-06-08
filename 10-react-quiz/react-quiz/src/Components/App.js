@@ -11,6 +11,7 @@ import Progress from "./Progress";
 import FinishScreen from "./FinishScreen";
 import Footer from "./Footer";
 import Timer from "./Timer";
+import PreviousButton from "./PreviousButton";
 
 const SECS_PER_QUESTION = 30;
 
@@ -27,6 +28,7 @@ const initialState = {
   status: "loading",
   index: 0,
   answer: null,
+  userAnswers: [],
   points: 0,
   highscore: 0,
   secondsRemaining: null,
@@ -74,6 +76,7 @@ function reducer(state, action) {
       return {
         ...state,
         answer: action.payload,
+        userAnswers: [...state.userAnswers, action.payload],
         points:
           action.payload === question.correctOption
             ? state.points + question.points
@@ -81,6 +84,8 @@ function reducer(state, action) {
       };
     case "nextQuestion":
       return { ...state, index: state.index + 1, answer: null };
+    case "previousQuestion":
+      return { ...state, index: state.index - 1 };
     case "finish":
       const currentHigh = state.difficultyHighscore[state.difficulty] || 0;
       const newHigh = state.points > currentHigh ? state.points : currentHigh;
@@ -103,6 +108,13 @@ function reducer(state, action) {
         amountOfQuestions: state.questions.length,
         status: "ready",
         difficultyHighscore: state.difficultyHighscore,
+      };
+    case "review":
+      return {
+        ...state,
+        index: 0,
+        answer: null,
+        status: "review",
       };
     case "tick":
       return {
@@ -149,6 +161,7 @@ export default function App() {
       secondsRemaining,
       amountOfQuestions,
       shouldUploadHighscore,
+      userAnswers,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
@@ -244,6 +257,33 @@ export default function App() {
                 answer={answer}
                 numQuestions={toBeTestedQuestions}
                 index={index}
+                status={status}
+              />
+            </Footer>
+          </>
+        )}
+        {status === "review" && (
+          <>
+            <Question
+              question={finalQuestions[index]}
+              dispatch={dispatch}
+              answer={answer}
+              userAnswer={userAnswers[index]}
+            />
+            <Footer>
+              <NextButton
+                dispatch={dispatch}
+                answer={answer}
+                numQuestions={toBeTestedQuestions}
+                index={index}
+                status={status}
+              />
+              <PreviousButton
+                dispatch={dispatch}
+                answer={answer}
+                numQuestions={toBeTestedQuestions}
+                index={index}
+                status={status}
               />
             </Footer>
           </>

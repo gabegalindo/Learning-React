@@ -1,5 +1,6 @@
 import DifficultSelector from "./DifficultSelector";
 import Footer from "./Footer";
+import QuestionAmountSelector from "./QuestionAmountSelector";
 
 function StartScreen({
   toBeTestedQuestions,
@@ -24,20 +25,11 @@ function StartScreen({
       </div>
       <Footer>
         <DifficultSelector dispatch={dispatch} />
-        <p>You will be tested on</p>
-        <input
-          className="amount"
-          type="number"
-          value={amountOfQuestions}
-          onChange={(e) =>
-            dispatch({
-              type: "amountOfQuestions",
-              payload: Number(e.target.value),
-            })
-          }
-        ></input>
-
-        <p>of the {totalQuestions} questions available</p>
+        <QuestionAmountSelector
+          amountOfQuestions={amountOfQuestions}
+          dispatch={dispatch}
+          totalQuestions={totalQuestions}
+        />
       </Footer>
     </>
   );
