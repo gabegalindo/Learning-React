@@ -87,6 +87,7 @@ h4 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 3.2rem;
 }
 
 .progress {
@@ -142,6 +143,7 @@ progress {
 
 .btn-ui {
   float: right;
+  margin-right: 1rem;
 }
 
 .options {
@@ -256,4 +258,37 @@ progress {
 .counter * {
   font-size: inherit;
   padding: 0.8rem;
+}
+
+.difficulty {
+  display: block;
+  float: left;
+  font-family: inherit;
+  color: inherit;
+  font-size: 2rem;
+  border: 2px solid var(--color-dark);
+  background-color: var(--color-dark);
+  padding: 1.2rem 2.4rem;
+  margin-top: 3rem;
+  cursor: pointer;
+  border-radius: 100px;
+}
+
+.amount-div {
+  display: block;
+  float: right;
+}
+.amount-div p {
+  font-size: 2rem;
+}
+
+.amount {
+  font-family: inherit;
+  color: inherit;
+  font-size: 2rem;
+  border: 2px solid var(--color-dark);
+  background-color: var(--color-dark);
+  padding: 1.2rem 2.4rem;
+  cursor: pointer;
+  border-radius: 100px;
 }

@@ -1,4 +1,4 @@
-import DifficultSelector from "./DifficultSelector";
+import DifficultSelector from "./DifficultySelector";
 import Footer from "./Footer";
 import QuestionAmountSelector from "./QuestionAmountSelector";
 

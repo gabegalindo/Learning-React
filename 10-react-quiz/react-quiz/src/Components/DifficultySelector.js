@@ -1,8 +1,8 @@
-function DifficultSelector({ dispatch }) {
+function DifficultySelector({ dispatch }) {
   return (
     <>
       <select
-        className="difficulty "
+        className="difficulty"
         onChange={(e) =>
           dispatch({ type: "difficulty", payload: e.target.value })
         }
@@ -17,4 +17,4 @@ function DifficultSelector({ dispatch }) {
   );
 }
 
-export default DifficultSelector;
+export default DifficultySelector;

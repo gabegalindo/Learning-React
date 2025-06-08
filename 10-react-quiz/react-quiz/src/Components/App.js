@@ -133,6 +133,7 @@ function reducer(state, action) {
         difficulty: action.payload,
         initialQuestions: filteredQuestions,
         finalQuestions: filteredQuestions,
+        amountOfQuestions: filteredQuestions.length,
       };
     case "amountOfQuestions":
       return {
@@ -264,6 +265,14 @@ export default function App() {
         )}
         {status === "review" && (
           <>
+            <Progress
+              index={index}
+              numQuestions={toBeTestedQuestions}
+              points={points}
+              maxPossiblePoints={maxPossiblePoints}
+              answer={answer}
+              review={true}
+            />
             <Question
               question={finalQuestions[index]}
               dispatch={dispatch}

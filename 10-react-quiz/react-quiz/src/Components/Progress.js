@@ -1,7 +1,17 @@
-function Progress({ index, numQuestions, points, maxPossiblePoints, answer }) {
+function Progress({
+  index,
+  numQuestions,
+  points,
+  maxPossiblePoints,
+  answer,
+  review = false,
+}) {
   return (
     <header className="progress">
-      <progress max={numQuestions} value={index + Number(answer !== null)} />
+      <progress
+        max={numQuestions}
+        value={!review ? index + Number(answer !== null) : index + 1}
+      />
 
       <p>
         Question <strong>{index + 1}</strong> / {numQuestions}{" "}

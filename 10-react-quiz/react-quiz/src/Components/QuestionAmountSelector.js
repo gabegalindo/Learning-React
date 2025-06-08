@@ -4,10 +4,10 @@ function QuestionAmountSelector({
   totalQuestions,
 }) {
   return (
-    <div>
+    <div className="amount-div">
       <p>You will be tested on</p>
       <input
-        className="amount "
+        className="amount"
         type="number"
         value={amountOfQuestions}
         onChange={(e) =>
