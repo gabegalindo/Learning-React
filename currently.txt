@@ -1,6 +1,6 @@
 Last left off on
 Chapter: 17
-Video: 13
+Video: 14
 Time:
 
-Video: 204, section 17; shows the steps to setup a vite react application and configure eslint
+Video: 204, section 17; shows the steps to setup a vite react application and configure eslintr
