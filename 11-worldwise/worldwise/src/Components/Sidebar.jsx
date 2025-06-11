@@ -11,6 +11,7 @@ function Sidebar() {
       <AppNav />
 
       <Outlet />
+
       <Footer />
     </div>
   );
