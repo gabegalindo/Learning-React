@@ -19,7 +19,8 @@ function Map() {
         Position: {lat}, {lng}
       </h1>
       <button
-        onClick={() => {
+        onClick={(e) => {
+          // e.stopPropagation();
           setSearchParams({ lat: 23, lng: 50 });
         }}
       >
