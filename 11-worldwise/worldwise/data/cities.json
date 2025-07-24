@@ -49,100 +49,28 @@
       "id": 98443198
     },
     {
-      "cityName": "Ras Ain Rhamna",
-      "country": "Morocco",
-      "emoji": "🇲🇦",
-      "date": "2025-07-24T21:43:44.382Z",
-      "notes": "teststtst",
-      "position": {
-        "lat": "31.728167146023935",
-        "lng": "-7.690429687500001"
-      },
-      "id": 98443199
-    },
-    {
-      "cityName": "Fraga",
+      "cityName": "Calamocha",
       "country": "Spain",
       "emoji": "🇪🇸",
-      "date": "2025-07-24T21:46:31.374Z",
+      "date": "2025-07-24T23:08:11.471Z",
       "notes": "",
       "position": {
-        "lat": "41.541477666790286",
-        "lng": "0.30761718750000006"
+        "lat": "41.02964338716641",
+        "lng": "-1.2524414062500002"
       },
-      "id": 98443200
+      "id": 98443207
     },
     {
-      "cityName": "Granada",
-      "country": "Spain",
-      "emoji": "🇪🇸",
-      "date": "2025-07-24T21:46:44.368Z",
+      "cityName": "Carrigaline",
+      "country": "Ireland",
+      "emoji": "🇮🇪",
+      "date": "2025-07-24T23:08:16.583Z",
       "notes": "",
       "position": {
-        "lat": "37.16031654673677",
-        "lng": "-3.5980224609375"
+        "lat": "51.83577752045248",
+        "lng": "-8.371582031250002"
       },
-      "id": 98443201
-    },
-    {
-      "cityName": "Ubuntu",
-      "country": "South Africa",
-      "emoji": "🇿🇦",
-      "date": "2024-10-16T21:47:01.000Z",
-      "notes": "fun",
-      "position": {
-        "lat": "-31.05293398570515",
-        "lng": "23.027343750000004"
-      },
-      "id": 98443202
-    },
-    {
-      "cityName": "Paris",
-      "country": "France",
-      "emoji": "🇫🇷",
-      "date": "2025-07-24T21:52:19.776Z",
-      "notes": "",
-      "position": {
-        "lat": "48.821332549646655",
-        "lng": "2.4389648437500004"
-      },
-      "id": 98443203
-    },
-    {
-      "cityName": "Paris",
-      "country": "France",
-      "emoji": "🇫🇷",
-      "date": "2025-07-24T21:53:15.341Z",
-      "notes": "",
-      "position": {
-        "lat": "48.821332549646655",
-        "lng": "2.4389648437500004"
-      },
-      "id": 98443204
-    },
-    {
-      "cityName": "Jodoigne",
-      "country": "Belgium",
-      "emoji": "🇧🇪",
-      "date": "2025-07-24T21:53:38.838Z",
-      "notes": "",
-      "position": {
-        "lat": "50.72254683363231",
-        "lng": "4.899902343750001"
-      },
-      "id": 98443205
-    },
-    {
-      "cityName": "Feyzin",
-      "country": "France",
-      "emoji": "🇫🇷",
-      "date": "2025-07-24T21:54:42.626Z",
-      "notes": "",
-      "position": {
-        "lat": "45.67548217560647",
-        "lng": "4.877929687500001"
-      },
-      "id": 98443206
+      "id": 98443209
     }
   ]
 }
