@@ -1,13 +1,11 @@
+import { useQuizContext } from "../Contexts/QuizContext";
 import DifficultSelector from "./DifficultySelector";
 import Footer from "./Footer";
 import QuestionAmountSelector from "./QuestionAmountSelector";
 
-function StartScreen({
-  toBeTestedQuestions,
-  totalQuestions,
-  dispatch,
-  amountOfQuestions,
-}) {
+function StartScreen() {
+  const { toBeTestedQuestions, dispatch } = useQuizContext();
+
   return (
     <>
       <div className="start">
@@ -24,12 +22,8 @@ function StartScreen({
         </button>
       </div>
       <Footer>
-        <DifficultSelector dispatch={dispatch} />
-        <QuestionAmountSelector
-          amountOfQuestions={amountOfQuestions}
-          dispatch={dispatch}
-          totalQuestions={totalQuestions}
-        />
+        <DifficultSelector />
+        <QuestionAmountSelector />
       </Footer>
     </>
   );

@@ -1,4 +1,8 @@
-function DifficultySelector({ dispatch }) {
+import { useQuizContext } from "../Contexts/QuizContext";
+
+function DifficultySelector() {
+  const { dispatch } = useQuizContext();
+
   return (
     <>
       <select

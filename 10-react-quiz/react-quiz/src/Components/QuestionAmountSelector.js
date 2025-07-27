@@ -1,8 +1,9 @@
-function QuestionAmountSelector({
-  amountOfQuestions,
-  dispatch,
-  totalQuestions,
-}) {
+import { useQuizContext } from "../Contexts/QuizContext";
+
+function QuestionAmountSelector() {
+  const { amountOfQuestions, dispatch, finalQuestionsAmount } =
+    useQuizContext();
+
   return (
     <div className="amount-div">
       <p>You will be tested on</p>
@@ -18,7 +19,7 @@ function QuestionAmountSelector({
         }
       ></input>
 
-      <p>of the {totalQuestions} questions available</p>
+      <p>of the {finalQuestionsAmount} questions available</p>
     </div>
   );
 }
