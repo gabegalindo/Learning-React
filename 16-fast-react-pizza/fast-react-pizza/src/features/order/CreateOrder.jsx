@@ -37,6 +37,7 @@ function CreateOrder() {
   const isSubmitting = navigation.state === "submitting";
 
   const formErrors = useActionData();
+  console.log(formErrors);
 
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
@@ -58,6 +59,7 @@ function CreateOrder() {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
 
         <div>
