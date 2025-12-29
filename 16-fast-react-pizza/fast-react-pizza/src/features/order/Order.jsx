@@ -10,6 +10,8 @@ import {
 } from "../../utils/helpers";
 import { getOrder } from "../../services/apiRestaurant";
 import { useEffect } from "react";
+import UpdateOrder from "./UpdateOrder";
+import EditOrder from "./EditOrder";
 
 function Order() {
   const order = useLoaderData();
@@ -37,7 +39,7 @@ function Order() {
   // const order = useLoaderData();
 
   return (
-    <div className="space-y-8 px-4 py-6">
+    <div className="relative space-y-8 px-4 py-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-xl font-semibold">Order #{id} status</h2>
 
@@ -88,6 +90,10 @@ function Order() {
         <p className="font-bold">
           To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}
         </p>
+      </div>
+      <div className="flex justify-end gap-x-2">
+        {!priority && <UpdateOrder order={order} />}
+        <EditOrder />
       </div>
     </div>
   );
