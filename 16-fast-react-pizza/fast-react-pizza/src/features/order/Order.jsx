@@ -93,7 +93,7 @@ function Order() {
       </div>
       <div className="flex justify-end gap-x-2">
         {!priority && <UpdateOrder order={order} />}
-        <EditOrder />
+        <EditOrder order={order} />
       </div>
     </div>
   );
