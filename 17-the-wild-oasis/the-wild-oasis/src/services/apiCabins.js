@@ -12,8 +12,9 @@ export async function getCabins() {
 }
 
 export async function createEditCabin(newCabin, id) {
-  console.log(newCabin, id);
+  const payload = { ...newCabin };
 
+  // Check if no new file was picked
   const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
 
   const imageName = `${Math.random()}-${newCabin.image?.name}`.replaceAll(
@@ -21,19 +22,26 @@ export async function createEditCabin(newCabin, id) {
     ""
   );
 
+  // If no new file was picked use old file, if no prev file, create new path
   const imagePath = hasImagePath
     ? newCabin.image
     : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
   // https://wawbytwmofglacqodaxp.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg
 
+  // Check if image url was passed in, if so, add on to the payload
+  // This prevents the weird overwrite bug when a user clicks "Choose file" but then hits cancel which makes the image input value 'undefined'
+  if (newCabin.image) payload.image = imagePath;
+
   // 1. Create cabin
   let query = supabase.from("cabins");
 
   // A) CREATE
-  if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
+  if (!id) query = query.insert([{ ...payload }]);
 
   // B) EDIT
-  if (id) query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
+  if (id) {
+    query = query.update({ ...payload }).eq("id", id);
+  }
 
   const { data, error } = await query.select().single();
 
@@ -43,6 +51,8 @@ export async function createEditCabin(newCabin, id) {
   }
 
   // 2. Upload image
+  if (hasImagePath) return data;
+
   const { error: storageError } = await supabase.storage
     .from("cabin-images")
     .upload(imageName, newCabin.image);

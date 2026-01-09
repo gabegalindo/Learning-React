@@ -18,35 +18,37 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
 
-  const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: isEditSession ? editValues : {},
-  });
+  const { register, handleSubmit, reset, getValues, formState, watch } =
+    useForm({
+      defaultValues: isEditSession ? editValues : {},
+    });
 
   const { errors } = formState;
 
+  const imageValue = watch("image");
+  console.log("imageValue:", imageValue);
+
   function onSubmit(data) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
-    console.log(data);
-    if (isEditSession)
-      editCabin(
-        { newCabinData: { ...data, image }, id: editId },
-        {
-          onSuccess: (data) => {
-            console.log(data);
-            reset();
-          },
-        }
-      );
+    const fileList = data.image;
+
+    const hasNewImage =
+      fileList && typeof fileList !== "string" && fileList.length > 0;
+
+    console.log(`test image: ${image}`);
+
+    const payload = { ...data };
+    delete payload.image;
+
+    if (hasNewImage) payload.image = fileList[0];
+
+    if (isEditSession) editCabin({ newCabinData: payload, id: editId });
     else
-      createCabin(
-        { ...data, image },
-        {
-          onSuccess: (data) => {
-            console.log(data);
-            reset();
-          },
-        }
-      );
+      createCabin(payload, {
+        onSuccess: (data) => {
+          reset();
+        },
+      });
   }
 
   function onError(errors) {
@@ -149,7 +151,6 @@ function CreateCabinForm({ cabinToEdit = {} }) {
           Cancel
         </Button>
         <Button disabled={isWorking}>
-          {" "}
           {isEditSession ? "Edit cabin" : "Create new cabin"}
         </Button>
       </FormRow>
