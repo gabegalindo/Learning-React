@@ -10,7 +10,7 @@ import FormRow from "../../ui/FormRow";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { isCreating, createCabin } = useCreateCabin();
   const { isEditing, editCabin } = useEditCabin();
   const isWorking = isCreating || isEditing;
@@ -25,28 +25,33 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
   const { errors } = formState;
 
-  const imageValue = watch("image");
-  console.log("imageValue:", imageValue);
-
   function onSubmit(data) {
-    const image = typeof data.image === "string" ? data.image : data.image[0];
+    // Jonas original solution
+    // const image = typeof data.image === "string" ? data.image : data.image[0];
     const fileList = data.image;
 
     const hasNewImage =
       fileList && typeof fileList !== "string" && fileList.length > 0;
-
-    console.log(`test image: ${image}`);
 
     const payload = { ...data };
     delete payload.image;
 
     if (hasNewImage) payload.image = fileList[0];
 
-    if (isEditSession) editCabin({ newCabinData: payload, id: editId });
+    if (isEditSession)
+      editCabin(
+        { newCabinData: payload, id: editId },
+        {
+          onSuccess: (data) => {
+            onCloseModal?.();
+          },
+        }
+      );
     else
       createCabin(payload, {
         onSuccess: (data) => {
           reset();
+          onCloseModal?.();
         },
       });
   }
@@ -56,7 +61,10 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -147,7 +155,11 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isWorking}>
